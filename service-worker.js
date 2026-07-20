@@ -7,8 +7,8 @@ const CACHE_NAME = 'enraizar-cache-v1';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
-  './imagens/icon-192.png',
-  './imagens/icon-512.png'
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
