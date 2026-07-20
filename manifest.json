@@ -1,0 +1,25 @@
+{
+  "name": "Enraizar — companheiro de bem-estar",
+  "short_name": "Enraizar",
+  "description": "Check-ins diários, diário pessoal, metas pequenas e contadores gentis.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF6F0",
+  "theme_color": "#6E8B65",
+  "icons": [
+    {
+      "src": "imagens/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "imagens/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
