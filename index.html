@@ -361,6 +361,154 @@
   .low-mood-note a, .low-mood-note button.link-like{
     color:#9c4a36; font-weight:700; text-decoration:underline; background:none; border:none; padding:0; font-size:inherit; cursor:pointer;
   }
+
+  /* ---------- HUD: stats strip ---------- */
+  .stats-strip{
+    display:flex;
+    gap:10px;
+    margin-bottom: 16px;
+  }
+  .stat-chip{
+    flex:1;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 10px;
+    text-align:center;
+    box-shadow: var(--shadow);
+  }
+  .stat-chip .stat-num{
+    font-family:'Fraunces', serif;
+    font-size: 1.4rem;
+    color: var(--sage-deep);
+    line-height:1;
+  }
+  .stat-chip .stat-label{
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height:1.25;
+  }
+
+  /* ---------- progress ring on counters ---------- */
+  .counter-top{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .ring-wrap{ position:relative; width:56px; height:56px; flex-shrink:0; }
+  .ring-wrap svg{ width:56px; height:56px; transform: rotate(-90deg); }
+  .ring-bg{ fill:none; stroke: var(--line); stroke-width:5; }
+  .ring-fg{ fill:none; stroke: var(--sage); stroke-width:5; stroke-linecap:round; transition: stroke-dashoffset .5s ease; }
+  .ring-label{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:0.62rem; color: var(--ink-soft); font-weight:600;
+  }
+
+  /* ---------- celebration modal ---------- */
+  .celebration-backdrop{
+    position:fixed; inset:0; background: rgba(46,42,38,0.6);
+    display:none; align-items:center; justify-content:center; z-index:80;
+    padding: 20px;
+  }
+  .celebration-backdrop.open{ display:flex; }
+  .celebration-card{
+    background: linear-gradient(165deg, var(--sage-pale) 0%, var(--white) 60%);
+    border-radius: 24px;
+    padding: 32px 24px 26px;
+    max-width: 380px;
+    width:100%;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    animation: popin .4s cubic-bezier(.2,.9,.3,1.3);
+  }
+  @keyframes popin{ from{ transform:scale(.85); opacity:0;} to{ transform:scale(1); opacity:1;} }
+  .celebration-badge{ font-size: 3rem; margin-bottom:6px; }
+  .celebration-days{ font-family:'Fraunces', serif; font-size: 2.6rem; color: var(--sage-deep); line-height:1; }
+  .celebration-title{ font-size:1.1rem; font-weight:600; margin: 6px 0 10px; }
+  .celebration-msg{ font-size:0.9rem; color: var(--ink-soft); line-height:1.55; margin-bottom: 18px; }
+  .celebration-actions{ display:flex; gap:8px; }
+  #confettiCanvas{ position:absolute; inset:0; pointer-events:none; }
+
+  /* ---------- chat view ---------- */
+  .chat-disclosure{
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    background: var(--bg-soft);
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 12px;
+    line-height:1.45;
+  }
+  .chat-window{
+    display:flex; flex-direction:column; gap:10px;
+    min-height: 30vh;
+    margin-bottom: 12px;
+  }
+  .chat-bubble{
+    max-width: 84%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.88rem;
+    line-height:1.5;
+    white-space: pre-wrap;
+  }
+  .chat-bubble.assistant{
+    background: var(--sage-pale);
+    color: var(--ink);
+    align-self:flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .chat-bubble.user{
+    background: var(--sage);
+    color: var(--white);
+    align-self:flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-bubble.thinking{ color: var(--ink-soft); font-style:italic; }
+  .chat-input-row{
+    display:flex; gap:8px;
+    position: sticky; bottom: 78px;
+  }
+  .chat-input-row textarea{ min-height: 44px; max-height:120px; }
+  .chat-suggestions{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .chat-suggestion-btn{
+    border:1px solid var(--line); background: var(--white); border-radius:999px;
+    padding: 6px 12px; font-size:0.76rem; color: var(--ink-soft); cursor:pointer;
+  }
+
+  /* ---------- periodic reminders ---------- */
+  .reminder-item{
+    display:flex; align-items:center; gap:10px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .reminder-item:last-child{ border-bottom:none; }
+  .reminder-info{ flex:1; }
+  .reminder-label{ font-size:0.9rem; font-weight:600; }
+  .reminder-due{ font-size:0.75rem; color: var(--ink-soft); margin-top:2px; }
+  .reminder-due.overdue{ color: var(--coral); font-weight:600; }
+  .reminder-actions-row{ display:flex; gap:6px; }
+  .reminder-actions-row button{ font-size:0.7rem; padding:6px 9px; }
+  .add-reminder-form{ display:flex; flex-direction:column; gap:8px; margin-top: 12px; }
+  .add-reminder-form .row{ display:flex; gap:8px; }
+  .add-reminder-form input{
+    border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+    font-family:'Inter'; font-size:0.85rem; background: var(--white);
+  }
+  .add-reminder-form input[type="text"]{ flex:2; }
+  .add-reminder-form input[type="number"]{ flex:1; }
+
+  /* ---------- body log ---------- */
+  .bodylog-form{ display:flex; gap:8px; margin-bottom: 14px; }
+  .bodylog-form input{
+    flex:1; border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+    font-family:'Inter'; font-size:0.85rem; background: var(--bg-soft);
+  }
+  .bodylog-entry{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.85rem;
+  }
+  .bodylog-entry:last-child{ border-bottom:none; }
+  .bodylog-date{ color: var(--ink-soft); font-size:0.75rem; }
+  .bodylog-remove{ background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:0.95rem; }
 </style>
 </head>
 <body>
@@ -382,6 +530,8 @@
 
     <!-- TODAY VIEW -->
     <section class="view active" id="view-hoje">
+
+      <div class="stats-strip" id="statsStrip"></div>
 
       <div class="card plant-card">
         <svg class="plant-svg" id="plantSvg" viewBox="0 0 200 150"></svg>
@@ -451,6 +601,30 @@
       </div>
 
       <div class="card">
+        <h2>Lembretes periódicos</h2>
+        <p class="sub">Coisas que não são todo dia, mas você não quer esquecer — a cada tantos dias, semanas ou meses.</p>
+        <div id="periodicList"></div>
+        <div class="add-reminder-form">
+          <input type="text" id="newReminderLabel" placeholder="ex: aparar as pernas">
+          <div class="row">
+            <input type="number" id="newReminderInterval" placeholder="a cada quantos dias?" min="1" value="90">
+            <button class="btn btn-ghost" onclick="addPeriodicReminder()">Adicionar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Peso e altura</h2>
+        <p class="sub">Só um registro simples ao longo do tempo — sem metas, sem cálculo de nada, só pra você acompanhar se quiser.</p>
+        <div class="bodylog-form">
+          <input type="number" step="0.1" id="newWeightInput" placeholder="peso (kg)">
+          <input type="number" step="0.1" id="newHeightInput" placeholder="altura (cm)">
+          <button class="btn btn-ghost" onclick="addBodyLog()">+</button>
+        </div>
+        <div id="bodyLogList"></div>
+      </div>
+
+      <div class="card">
         <h2>Aniversário</h2>
         <div class="bday-row">
           <div class="bday-number" id="bdayNumber">—</div>
@@ -466,7 +640,26 @@
 
     </section>
 
-    <!-- GOALS/CONFIG placeholder view could reuse hoje; settings via modal -->
+    <!-- CHAT VIEW -->
+    <section class="view" id="view-conversar">
+      <div class="card">
+        <h2>Conversar</h2>
+        <p class="sub">Um espaço pra pensar em voz alta sobre seus check-ins e seu diário.</p>
+        <div class="chat-disclosure">
+          🔒 Diferente do resto do app (que fica só no seu aparelho), estas mensagens — e um resumo dos seus registros recentes — são enviadas para a API da Anthropic pra gerar as respostas. Não é um(a) terapeuta e não substitui um(a) profissional.
+        </div>
+        <div class="chat-suggestions" id="chatSuggestions">
+          <button class="chat-suggestion-btn" onclick="sendSuggestion('Como você acha que eu tenho estado essa semana?')">Como estive essa semana?</button>
+          <button class="chat-suggestion-btn" onclick="sendSuggestion('Percebe algum padrão no meu diário?')">Algum padrão no meu diário?</button>
+          <button class="chat-suggestion-btn" onclick="sendSuggestion('Preciso de um empurrãozinho pra hoje.')">Empurrãozinho pra hoje</button>
+        </div>
+        <div class="chat-window" id="chatWindow"></div>
+        <div class="chat-input-row">
+          <textarea id="chatInput" placeholder="Escreva algo..."></textarea>
+          <button class="btn btn-primary" id="chatSendBtn" onclick="sendChatMessage()">Enviar</button>
+        </div>
+      </div>
+    </section>
 
   </main>
 
@@ -480,11 +673,29 @@
     <button class="tab-btn" data-view="progresso" onclick="switchView('progresso')">
       <span class="icon">🌱</span> Progresso
     </button>
+    <button class="tab-btn" data-view="conversar" onclick="switchView('conversar')">
+      <span class="icon">💬</span> Conversar
+    </button>
     <button class="tab-btn" data-view="settings" onclick="openModal('settingsModal')">
       <span class="icon">⚙️</span> Ajustes
     </button>
   </nav>
 
+</div>
+
+<!-- CELEBRATION MODAL -->
+<div class="celebration-backdrop" id="celebrationModal">
+  <div class="celebration-card">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="celebration-badge">🎉</div>
+    <div class="celebration-days" id="celebrationDays">0</div>
+    <div class="celebration-title" id="celebrationTitle">dias</div>
+    <div class="celebration-msg" id="celebrationMsg"></div>
+    <div class="celebration-actions">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeCelebration()">Fechar</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="shareCelebration()">Compartilhar</button>
+    </div>
+  </div>
 </div>
 
 <!-- CRISIS MODAL -->
@@ -514,11 +725,17 @@
       <input type="text" id="userNameInput" placeholder="seu nome ou apelido">
     </div>
     <div class="settings-row">
+      <label>Alguém que torce por você (opcional)</label>
+      <input type="text" id="supportNameInput" placeholder="ex: minha melhor amiga, meu irmão...">
+      <p class="sub" style="margin:0;">Vamos citar esse nome nas telas de comemoração de marcos.</p>
+    </div>
+    <div class="settings-row">
       <label>Lembretes gentis</label>
       <div class="toggle-group" style="flex-wrap:wrap;">
         <button class="toggle-btn active" id="remWater" onclick="toggleReminder('remWater')">09:00 — beber água</button>
         <button class="toggle-btn active" id="remFood" onclick="toggleReminder('remFood')">18:00 — como foi o dia</button>
         <button class="toggle-btn active" id="remCheckin" onclick="toggleReminder('remCheckin')">21:00 — hora de descansar</button>
+        <button class="toggle-btn active" id="remBed" onclick="toggleReminder('remBed')">23:30 — não passar da meia-noite</button>
       </div>
       <button class="btn btn-ghost" style="margin-top:8px;" onclick="requestNotificationPermission()" id="notifPermBtn">Ativar notificações neste navegador</button>
       <p class="sub" style="margin-top:6px;">Isso só funciona com a página aberta em segundo plano no navegador. Num app de celular de verdade, essas mensagens viram notificações do sistema mesmo com o app fechado.</p>
@@ -545,6 +762,7 @@ const STORAGE_KEY = 'enraizar-state-v1';
 
 const defaultState = {
   userName: "",
+  supportName: "",
   checkins: [],
   journal: [],
   goals: [
@@ -553,12 +771,15 @@ const defaultState = {
     {id: cryptoId(), text: "Falar com alguém, nem que seja um oi", done: false},
   ],
   counters: [
-    {id: cryptoId(), name: "Dias cuidando de mim", start: todayMinus(4), record: 4},
-    {id: cryptoId(), name: "Meu caminho de autocuidado", start: todayMinus(9), record: 9},
+    {id: cryptoId(), name: "Dias cuidando de mim", start: todayMinus(4), record: 4, lastCelebrated: 0},
+    {id: cryptoId(), name: "Meu caminho de autocuidado", start: todayMinus(9), record: 9, lastCelebrated: 0},
   ],
   birthday: null,
-  reminders: {remWater:true, remFood:true, remCheckin:true},
+  reminders: {remWater:true, remFood:true, remCheckin:true, remBed:true},
   notifiedToday: {},
+  chatMessages: [],
+  periodicReminders: [],
+  bodyLog: [],
 };
 
 function cryptoId(){ return Math.random().toString(36).slice(2,10); }
@@ -646,8 +867,10 @@ function switchView(name){
   document.getElementById('view-'+name).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector(`.tab-btn[data-view="${name}"]`)?.classList.add('active');
+  if(name==='hoje') renderStatsStrip();
   if(name==='diario') renderJournal();
-  if(name==='progresso'){ renderCounters(); renderChart(); renderBday(); }
+  if(name==='progresso'){ renderCounters(); renderChart(); renderBday(); renderPeriodicReminders(); renderBodyLog(); }
+  if(name==='conversar') renderChat();
 }
 
 function openModal(id){ document.getElementById(id).classList.add('open'); }
@@ -739,10 +962,41 @@ function addGoal(){
   renderGoals();
 }
 
+/* ---------- HUD: stats strip ---------- */
+function renderStatsStrip(){
+  const wrap = document.getElementById('statsStrip');
+  if(!wrap) return;
+  const bestCounter = state.counters.reduce((best,c)=>{
+    const days = daysSince(c.start);
+    return days > (best?.days ?? -1) ? {name:c.name, days} : best;
+  }, null);
+  const last7 = state.checkins.slice(-7);
+  const avgMood = last7.length ? (last7.reduce((s,c)=>s+c.mood,0)/last7.length) : null;
+  const goalsDone = state.goals.filter(g=>g.done).length;
+
+  wrap.innerHTML = `
+    <div class="stat-chip">
+      <div class="stat-num">${bestCounter ? bestCounter.days : '—'}</div>
+      <div class="stat-label">${bestCounter ? escapeHtml(bestCounter.name) : 'crie um contador'}</div>
+    </div>
+    <div class="stat-chip">
+      <div class="stat-num">${avgMood ? avgMood.toFixed(1) : '—'}</div>
+      <div class="stat-label">humor médio (7 dias)</div>
+    </div>
+    <div class="stat-chip">
+      <div class="stat-num">${goalsDone}/${state.goals.length || 0}</div>
+      <div class="stat-label">metas hoje</div>
+    </div>`;
+}
+
 /* ---------- counters ---------- */
 function daysSince(iso){
   const diff = Date.now() - new Date(iso).getTime();
   return Math.max(0, Math.floor(diff / 86400000));
+}
+const MILESTONES = [7, 30, 60, 100, 180, 365, 500, 730, 1000];
+function nextMilestone(days){
+  return MILESTONES.find(m=>m>days) || (Math.ceil((days+1)/1000)*1000);
 }
 function renderCounters(){
   const wrap = document.getElementById('counterGrid');
@@ -750,14 +1004,28 @@ function renderCounters(){
   state.counters.forEach(c=>{
     const days = daysSince(c.start);
     const record = Math.max(c.record||0, days);
+    const target = nextMilestone(days);
+    const prevMilestone = [0,...MILESTONES].filter(m=>m<=days).pop() || 0;
+    const span = target - prevMilestone;
+    const progress = span > 0 ? (days - prevMilestone) / span : 0;
+    const R = 23.5, C = 2*Math.PI*R;
+    const offset = C * (1 - progress);
+
     const div = document.createElement('div');
     div.className = 'counter-card';
     div.innerHTML = `
       <div class="counter-top">
-        <div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 56 56">
+            <circle class="ring-bg" cx="28" cy="28" r="${R}"></circle>
+            <circle class="ring-fg" cx="28" cy="28" r="${R}" stroke-dasharray="${C}" stroke-dashoffset="${offset}"></circle>
+          </svg>
+          <div class="ring-label">${target}</div>
+        </div>
+        <div style="flex:1;">
           <div class="counter-name">${escapeHtml(c.name)}</div>
           <div class="counter-days">${days}</div>
-          <div class="counter-unit">dias</div>
+          <div class="counter-unit">dias · próxima marca em ${target - days}</div>
         </div>
       </div>
       ${record > days ? `<div class="counter-record">seu melhor até agora: ${record} dias — isso continua valendo</div>` : ''}
@@ -771,12 +1039,30 @@ function renderCounters(){
       </div>`;
     wrap.appendChild(div);
   });
+  checkMilestones();
+}
+function checkMilestones(){
+  const queue = [];
+  state.counters.forEach(c=>{
+    const days = daysSince(c.start);
+    const crossed = MILESTONES.filter(m => m <= days && m > (c.lastCelebrated||0));
+    if(crossed.length){
+      const m = crossed[crossed.length-1];
+      queue.push({counter:c, milestone:m});
+      c.lastCelebrated = m;
+    }
+  });
+  if(queue.length){
+    saveState();
+    showCelebrationQueue(queue);
+  }
 }
 function resetCounter(id){
   const c = state.counters.find(c=>c.id===id);
   const days = daysSince(c.start);
   c.record = Math.max(c.record||0, days);
   c.start = new Date().toISOString();
+  c.lastCelebrated = 0;
   saveState();
   renderCounters();
   const box = document.getElementById('reframe-'+id);
@@ -791,10 +1077,103 @@ function addCounter(){
   const input = document.getElementById('newCounterInput');
   const name = input.value.trim();
   if(!name) return;
-  state.counters.push({id: cryptoId(), name, start: new Date().toISOString(), record:0});
+  state.counters.push({id: cryptoId(), name, start: new Date().toISOString(), record:0, lastCelebrated:0});
   input.value = '';
   saveState();
   renderCounters();
+}
+
+/* ---------- lembretes periódicos ---------- */
+function renderPeriodicReminders(){
+  const wrap = document.getElementById('periodicList');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  if(state.periodicReminders.length === 0){
+    wrap.innerHTML = `<div class="empty-state">Nenhum ainda. Adicione algo tipo "trocar a escova" ou "aparar as pernas".</div>`;
+    return;
+  }
+  state.periodicReminders.forEach(r=>{
+    const dueIn = Math.ceil((new Date(r.lastDone).getTime() + r.intervalDays*86400000 - Date.now()) / 86400000);
+    const overdue = dueIn <= 0;
+    const div = document.createElement('div');
+    div.className = 'reminder-item';
+    div.innerHTML = `
+      <div class="reminder-info">
+        <div class="reminder-label">${escapeHtml(r.label)}</div>
+        <div class="reminder-due ${overdue?'overdue':''}">${overdue ? 'já pode fazer de novo' : `próximo em ${dueIn} dia${dueIn===1?'':'s'}`} · a cada ${r.intervalDays} dias</div>
+      </div>
+      <div class="reminder-actions-row">
+        <button class="btn btn-ghost" onclick="markPeriodicDone('${r.id}')">Feito hoje</button>
+        <button class="btn btn-ghost" onclick="removePeriodicReminder('${r.id}')">✕</button>
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+function addPeriodicReminder(){
+  const labelInput = document.getElementById('newReminderLabel');
+  const intervalInput = document.getElementById('newReminderInterval');
+  const label = labelInput.value.trim();
+  const interval = parseInt(intervalInput.value, 10) || 90;
+  if(!label) return;
+  state.periodicReminders.push({id: cryptoId(), label, intervalDays: interval, lastDone: new Date().toISOString()});
+  labelInput.value = '';
+  intervalInput.value = 90;
+  saveState();
+  renderPeriodicReminders();
+}
+function markPeriodicDone(id){
+  const r = state.periodicReminders.find(r=>r.id===id);
+  r.lastDone = new Date().toISOString();
+  saveState();
+  renderPeriodicReminders();
+}
+function removePeriodicReminder(id){
+  state.periodicReminders = state.periodicReminders.filter(r=>r.id!==id);
+  saveState();
+  renderPeriodicReminders();
+}
+
+/* ---------- peso e altura ----------
+   Registro simples, sem metas nem cálculos (sem IMC, sem "peso ideal").
+   É só uma lista com data, pra a pessoa acompanhar se quiser — nada aqui
+   julga ou sugere o que o número "deveria" ser.
+------------------------------------------------------- */
+function renderBodyLog(){
+  const wrap = document.getElementById('bodyLogList');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  if(state.bodyLog.length === 0){
+    wrap.innerHTML = `<div class="empty-state">Nenhum registro ainda.</div>`;
+    return;
+  }
+  state.bodyLog.slice().reverse().forEach(entry=>{
+    const div = document.createElement('div');
+    div.className = 'bodylog-entry';
+    const parts = [];
+    if(entry.weight) parts.push(`${entry.weight} kg`);
+    if(entry.height) parts.push(`${entry.height} cm`);
+    div.innerHTML = `
+      <div><span class="bodylog-date">${fmtDate(entry.date)}</span> — ${parts.join(' · ')}</div>
+      <button class="bodylog-remove" onclick="removeBodyLog('${entry.id}')">✕</button>`;
+    wrap.appendChild(div);
+  });
+}
+function addBodyLog(){
+  const weightInput = document.getElementById('newWeightInput');
+  const heightInput = document.getElementById('newHeightInput');
+  const weight = parseFloat(weightInput.value) || null;
+  const height = parseFloat(heightInput.value) || null;
+  if(!weight && !height) return;
+  state.bodyLog.push({id: cryptoId(), date: new Date().toISOString(), weight, height});
+  weightInput.value = '';
+  heightInput.value = '';
+  saveState();
+  renderBodyLog();
+}
+function removeBodyLog(id){
+  state.bodyLog = state.bodyLog.filter(e=>e.id!==id);
+  saveState();
+  renderBodyLog();
 }
 
 /* ---------- birthday ---------- */
@@ -899,6 +1278,190 @@ function renderPlant(){
   else caption.textContent = "isso já é um jardim — e ele não desaparece num dia ruim.";
 }
 
+/* ---------- celebração de marcos ---------- */
+let celebrationQueue = [];
+const CELEBRATION_MESSAGES = [
+  "Isso é o tipo de número que merece ser dito em voz alta pra alguém que se importa com você.",
+  "Cada um desses dias foi uma escolha. Ninguém tira isso de você.",
+  "Não é pouco. É a prova de que você sabe se cuidar, mesmo quando é difícil.",
+  "Se hoje desse pra parar tudo por um segundo e comemorar de verdade, seria por isso.",
+];
+function showCelebrationQueue(queue){
+  celebrationQueue = queue;
+  showNextCelebration();
+}
+function showNextCelebration(){
+  if(celebrationQueue.length === 0) return;
+  const {counter, milestone} = celebrationQueue.shift();
+  document.getElementById('celebrationDays').textContent = milestone;
+  document.getElementById('celebrationTitle').textContent = counter.name.toLowerCase();
+  const base = CELEBRATION_MESSAGES[Math.floor(Math.random()*CELEBRATION_MESSAGES.length)];
+  const withPerson = state.supportName
+    ? ` Vale contar pra ${escapeHtml(state.supportName)}, ou pra quem estiver por perto agora.`
+    : '';
+  document.getElementById('celebrationMsg').textContent = base + withPerson;
+  const modal = document.getElementById('celebrationModal');
+  modal.classList.add('open');
+  runConfetti();
+}
+function closeCelebration(){
+  document.getElementById('celebrationModal').classList.remove('open');
+  setTimeout(showNextCelebration, 300);
+}
+function shareCelebration(){
+  const days = document.getElementById('celebrationDays').textContent;
+  const title = document.getElementById('celebrationTitle').textContent;
+  const text = `Hoje eu completei ${days} dias de ${title}. 🌱`;
+  if(navigator.share){
+    navigator.share({text}).catch(()=>{});
+  }else{
+    navigator.clipboard?.writeText(text);
+    alert('Copiado! Cole onde quiser compartilhar.');
+  }
+}
+function runConfetti(){
+  const canvas = document.getElementById('confettiCanvas');
+  const card = canvas.closest('.celebration-card');
+  const w = canvas.width = card.clientWidth;
+  const h = canvas.height = card.clientHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#6E8B65','#8CAB80','#8C7091','#C97865','#E1EADB'];
+  const pieces = Array.from({length:60}, ()=>({
+    x: Math.random()*w,
+    y: -20 - Math.random()*h*0.5,
+    r: 3 + Math.random()*4,
+    c: colors[Math.floor(Math.random()*colors.length)],
+    vy: 2 + Math.random()*2.5,
+    vx: -1 + Math.random()*2,
+    rot: Math.random()*360,
+    vrot: -6 + Math.random()*12
+  }));
+  let frame = 0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,w,h);
+    pieces.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);
+      ctx.restore();
+    });
+    if(frame < 110) requestAnimationFrame(tick);
+    else ctx.clearRect(0,0,w,h);
+  }
+  tick();
+}
+
+/* ---------- conversar (IA) ----------
+   Chama a API da Anthropic direto do navegador (fetch), passando
+   um resumo dos check-ins/diário/contadores recentes como contexto,
+   pra IA poder comentar padrões com embasamento real. As mensagens
+   ficam salvas no localStorage junto com o resto do state.
+------------------------------------------------------- */
+const CHAT_SYSTEM_PROMPT = `Você é a "voz" de dentro do app de bem-estar "Enraizar". Converse de forma calorosa, direta e honesta, como alguém que se importa de verdade — sem soar clínico ou robótico. Use frases curtas.
+
+Seu papel é ajudar a pessoa a refletir sobre os check-ins e anotações de diário recentes, apontando padrões com gentileza, SEM fazer diagnósticos clínicos e sem se apresentar como terapeuta. Quando fizer sentido, incentive terapia ou apoio profissional de verdade — você é um complemento, não substituto.
+
+Nunca reforce autocrítica, pensamentos de desesperança ou comportamentos de risco. Se a pessoa expressar ideação suicida, desejo de se machucar, ou disser que não está segura agora, pare de comentar dados: com calma, oriente-a a ligar para o CVV (188, 24h) ou o SAMU (192) imediatamente, e a avisar alguém de confiança perto dela — sem tentar resolver a crise sozinho(a) pelo chat.
+
+Seja breve: no máximo 2-3 parágrafos curtos por resposta.`;
+
+function buildChatContext(){
+  const lines = [];
+  const recentCheckins = state.checkins.slice(-10);
+  if(recentCheckins.length){
+    lines.push('Check-ins recentes (data, humor de 1-5, água/comida/sono):');
+    recentCheckins.forEach(c=>{
+      lines.push(`- ${new Date(c.date).toLocaleDateString('pt-BR')}: humor ${c.mood}, água=${c.water}, comida=${c.food}, sono=${c.sleep}`);
+    });
+  }else{
+    lines.push('Ainda não há check-ins registrados.');
+  }
+  const recentJournal = state.journal.slice(0,5);
+  if(recentJournal.length){
+    lines.push('\nÚltimas entradas do diário:');
+    recentJournal.forEach(j=>{
+      lines.push(`- ${new Date(j.date).toLocaleDateString('pt-BR')}: "${j.text.slice(0,200)}"`);
+    });
+  }
+  if(state.counters.length){
+    lines.push('\nContadores atuais:');
+    state.counters.forEach(c=>{
+      lines.push(`- ${c.name}: ${daysSince(c.start)} dias (melhor marca: ${Math.max(c.record||0, daysSince(c.start))})`);
+    });
+  }
+  return lines.join('\n');
+}
+
+function renderChat(){
+  const win = document.getElementById('chatWindow');
+  win.innerHTML = '';
+  if(state.chatMessages.length === 0){
+    const hello = state.userName
+      ? `Oi, ${state.userName}. Posso olhar seus check-ins e seu diário com você, se quiser — ou só conversar. O que tiver na cabeça.`
+      : 'Oi. Posso olhar seus check-ins e seu diário com você, se quiser — ou só conversar. O que tiver na cabeça.';
+    appendChatBubble('assistant', hello, false);
+  }else{
+    state.chatMessages.forEach(m=> appendChatBubble(m.role, m.text, false));
+  }
+  win.scrollTop = win.scrollHeight;
+}
+function appendChatBubble(role, text, scroll=true){
+  const win = document.getElementById('chatWindow');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble ' + role;
+  div.textContent = text;
+  win.appendChild(div);
+  if(scroll) win.scrollTop = win.scrollHeight;
+  return div;
+}
+function sendSuggestion(text){
+  document.getElementById('chatInput').value = text;
+  sendChatMessage();
+}
+async function sendChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  state.chatMessages.push({role:'user', text});
+  appendChatBubble('user', text);
+  saveState();
+
+  const btn = document.getElementById('chatSendBtn');
+  btn.disabled = true;
+  const thinking = appendChatBubble('assistant thinking', 'pensando...');
+
+  try{
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: CHAT_SYSTEM_PROMPT + '\n\nContexto atual da pessoa:\n' + buildChatContext(),
+        messages: state.chatMessages.slice(-16).map(m=>({role: m.role, content: m.text}))
+      })
+    });
+    const data = await response.json();
+    const textBlocks = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text);
+    const reply = textBlocks.join('\n').trim() || 'Não consegui pensar em uma resposta agora. Pode tentar de novo?';
+    thinking.remove();
+    appendChatBubble('assistant', reply);
+    state.chatMessages.push({role:'assistant', text: reply});
+    saveState();
+  }catch(err){
+    thinking.remove();
+    appendChatBubble('assistant', 'Não consegui responder agora — pode ser a conexão. Tenta de novo daqui a pouco?');
+    console.warn('Erro no chat:', err);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
 /* ---------- settings ---------- */
 function toggleReminder(key){
   state.reminders[key] = !state.reminders[key];
@@ -907,6 +1470,7 @@ function toggleReminder(key){
 }
 function saveSettings(){
   state.userName = document.getElementById('userNameInput').value.trim();
+  state.supportName = document.getElementById('supportNameInput').value.trim();
   document.getElementById('greetingText').textContent = state.userName ? `Oi, ${state.userName}.` : 'Oi. Que bom te ver.';
   saveState();
   closeModal('settingsModal');
@@ -924,6 +1488,7 @@ const FIXED_REMINDERS = [
   {time:'09:00', key:'remWater', text:'Bom dia. Você já bebeu água hoje? 🌱'},
   {time:'18:00', key:'remFood',  text:'Como foi seu dia? Teve algo pesado ou algo bom?'},
   {time:'21:00', key:'remCheckin', text:'Está perto do seu horário de descansar. Como sua cabeça está?'},
+  {time:'23:30', key:'remBed', text:'Se estiver estressado(a), tenta não deixar passar da meia-noite. Seu corpo agradece.'},
 ];
 
 function requestNotificationPermission(){
@@ -965,6 +1530,7 @@ if('serviceWorker' in navigator){
 
 /* ---------- boot ---------- */
 document.getElementById('userNameInput').value = state.userName || '';
+document.getElementById('supportNameInput').value = state.supportName || '';
 if(state.userName){ document.getElementById('greetingText').textContent = `Oi, ${state.userName}.`; }
 Object.keys(state.reminders).forEach(key=>{
   const el = document.getElementById(key);
@@ -974,6 +1540,8 @@ if(state.birthday){ document.getElementById('bdayInput').value = state.birthday;
 renderGoals();
 renderPlant();
 renderBday();
+renderStatsStrip();
+checkMilestones();
 </script>
 </body>
 </html>
