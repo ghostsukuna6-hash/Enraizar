@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Enraizar — companheiro de bem-estar</title>
+<meta name="theme-color" content="#6E8B65">
+<meta name="description" content="Um companheiro de bem-estar simples: check-ins, diário, metas pequenas e contadores gentis.">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="imagens/icon-192.png">
+<link rel="icon" href="imagens/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Caveat:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FAF6F0;
+    --bg-soft: #F1EBE1;
+    --ink: #2E2A26;
+    --ink-soft: #6B6259;
+    --sage: #6E8B65;
+    --sage-deep: #4F6B49;
+    --sage-pale: #E1EADB;
+    --plum: #8C7091;
+    --plum-pale: #ECE3ED;
+    --coral: #C97865;
+    --coral-pale: #F5E3DD;
+    --line: #E4DACB;
+    --white: #FFFDFA;
+    --radius: 18px;
+    --shadow: 0 2px 14px rgba(46,42,38,0.06);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0; padding:0; height:100%;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3, .display{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .handwritten{ font-family:'Caveat', cursive; }
+
+  #app{
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    background: var(--bg);
+    position:relative;
+  }
+
+  /* Top bar */
+  header.topbar{
+    padding: 22px 20px 14px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+  }
+  header.topbar .greeting{
+    font-size: 1.5rem;
+    color: var(--ink);
+  }
+  header.topbar .date{
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-transform: capitalize;
+  }
+  .help-link{
+    position: fixed;
+    max-width: 480px;
+    margin: 0 auto;
+    left:0; right:0;
+    top: 16px;
+    display:flex;
+    justify-content:flex-end;
+    padding: 0 18px;
+    pointer-events:none;
+    z-index: 40;
+  }
+  .help-btn{
+    pointer-events:auto;
+    background: var(--white);
+    border: 1px solid var(--line);
+    color: var(--coral);
+    font-size: 0.72rem;
+    font-weight:600;
+    padding: 7px 12px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+
+  main{
+    flex:1;
+    padding: 4px 20px 100px;
+  }
+
+  .view{ display:none; animation: fadein .35s ease; }
+  .view.active{ display:block; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .card{
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+  }
+  .card h2{ margin:0 0 4px; font-size:1.15rem; }
+  .card .sub{ color:var(--ink-soft); font-size:0.85rem; margin:0 0 14px; line-height:1.4;}
+
+  /* Signature element: growing plant */
+  .plant-card{
+    background: linear-gradient(180deg, var(--sage-pale) 0%, var(--bg) 100%);
+    border: 1px solid var(--line);
+    text-align:center;
+    padding: 22px 18px 14px;
+  }
+  .plant-svg{ width: 100%; max-width: 220px; height: 150px; }
+  .plant-caption{
+    font-family:'Caveat', cursive;
+    font-size: 1.35rem;
+    color: var(--sage-deep);
+    margin-top: 2px;
+  }
+
+  /* mood selector */
+  .mood-row{ display:flex; justify-content:space-between; gap:8px; margin-bottom: 4px;}
+  .mood-btn{
+    flex:1;
+    border:1px solid var(--line);
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 10px 0;
+    font-size: 1.35rem;
+    cursor:pointer;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .mood-btn:hover{ transform: translateY(-2px); }
+  .mood-btn.selected{
+    background: var(--sage-pale);
+    border-color: var(--sage);
+    transform: translateY(-2px) scale(1.04);
+  }
+  .mood-labels{ display:flex; justify-content:space-between; font-size:0.65rem; color:var(--ink-soft); padding: 0 2px; margin-bottom:16px;}
+
+  .checkin-questions{ display:flex; flex-direction:column; gap:10px; }
+  .q-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 10px 12px;
+    background: var(--bg-soft);
+    border-radius: 12px;
+  }
+  .q-row span{ font-size:0.9rem; }
+  .toggle-group{ display:flex; gap:6px; }
+  .toggle-btn{
+    border:1px solid var(--line);
+    background: var(--white);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    cursor:pointer;
+    color: var(--ink-soft);
+  }
+  .toggle-btn.active{
+    background: var(--sage);
+    border-color: var(--sage);
+    color: var(--white);
+    font-weight:600;
+  }
+
+  textarea{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    font-family:'Inter', sans-serif;
+    font-size: 0.92rem;
+    background: var(--bg-soft);
+    resize: vertical;
+    min-height: 70px;
+    color: var(--ink);
+  }
+  textarea:focus, input:focus{ outline: 2px solid var(--sage); outline-offset:1px; }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:none;
+    border-radius: 12px;
+    padding: 11px 18px;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:0.88rem;
+    cursor:pointer;
+  }
+  .btn-primary{ background: var(--sage); color: var(--white); }
+  .btn-primary:hover{ background: var(--sage-deep); }
+  .btn-ghost{ background: transparent; color: var(--ink-soft); border:1px solid var(--line); }
+  .btn-block{ width:100%; margin-top: 8px; }
+  .btn-coral{ background: var(--coral); color:var(--white); }
+
+  /* goals */
+  .goal-item{
+    display:flex; align-items:center; gap:10px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .goal-item:last-child{ border-bottom:none; }
+  .goal-check{
+    width: 22px; height:22px; border-radius:7px;
+    border: 2px solid var(--sage);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0;
+    color: var(--white);
+    font-size: 0.8rem;
+  }
+  .goal-check.done{ background: var(--sage); }
+  .goal-text{ flex:1; font-size:0.92rem; }
+  .goal-text.done{ text-decoration: line-through; color: var(--ink-soft); }
+  .goal-remove{ background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:1rem; padding:4px;}
+  .add-goal-row{ display:flex; gap:8px; margin-top:12px; }
+  .add-goal-row input{
+    flex:1; border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+    font-family:'Inter'; font-size:0.88rem; background:var(--bg-soft);
+  }
+
+  /* counters */
+  .counter-grid{ display:flex; flex-direction:column; gap:12px; }
+  .counter-card{
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .counter-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .counter-name{ font-weight:600; font-size:0.92rem; }
+  .counter-days{ font-family:'Fraunces', serif; font-size:1.8rem; color: var(--sage-deep); line-height:1; margin-top:2px;}
+  .counter-unit{ font-size:0.7rem; color:var(--ink-soft); }
+  .counter-record{ font-size:0.72rem; color: var(--plum); margin-top:6px; }
+  .counter-actions{ display:flex; gap:8px; margin-top:10px; }
+  .counter-actions button{ font-size:0.72rem; padding:6px 10px; }
+  .counter-reframe{
+    display:none;
+    margin-top:10px;
+    background: var(--plum-pale);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    color: #5c4760;
+    line-height:1.45;
+  }
+  .add-counter-row{ display:flex; gap:8px; margin-top:4px; }
+  .add-counter-row input{
+    flex:1; border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+    font-family:'Inter'; font-size:0.85rem; background: var(--white);
+  }
+
+  /* birthday */
+  .bday-row{ display:flex; align-items:center; gap:14px; }
+  .bday-number{ font-family:'Fraunces', serif; font-size:2.2rem; color: var(--plum); }
+  .bday-set{ display:flex; gap:8px; align-items:center; margin-top:10px; }
+  .bday-set input{ border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-family:'Inter'; font-size:0.85rem; }
+
+  /* journal list */
+  .entry{
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .entry:last-child{ border-bottom:none; }
+  .entry-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+  .entry-date{ font-size:0.75rem; color:var(--ink-soft); text-transform:capitalize; }
+  .entry-mood{ font-size:1.1rem; }
+  .entry-text{ font-size:0.9rem; line-height:1.5; color: var(--ink); }
+  .empty-state{ text-align:center; padding: 30px 10px; color: var(--ink-soft); font-size:0.88rem; }
+
+  /* mood chart */
+  .chart-wrap{ width:100%; }
+  svg.chart{ width:100%; height:120px; overflow:visible; }
+
+  /* bottom nav */
+  nav.tabbar{
+    position: fixed;
+    bottom:0; left:0; right:0;
+    max-width:480px;
+    margin:0 auto;
+    background: var(--white);
+    border-top: 1px solid var(--line);
+    display:flex;
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index: 30;
+  }
+  .tab-btn{
+    flex:1;
+    background:none; border:none;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding: 6px 0;
+    color: var(--ink-soft);
+    font-size: 0.66rem;
+    font-family:'Inter'; font-weight:500;
+    cursor:pointer;
+  }
+  .tab-btn .icon{ font-size:1.25rem; }
+  .tab-btn.active{ color: var(--sage-deep); }
+
+  /* modal (crisis / settings) */
+  .modal-backdrop{
+    position:fixed; inset:0; background: rgba(46,42,38,0.45);
+    display:none; align-items:flex-end; justify-content:center; z-index:60;
+  }
+  .modal-backdrop.open{ display:flex; }
+  .modal-sheet{
+    background: var(--white);
+    width:100%; max-width:480px;
+    border-radius: 20px 20px 0 0;
+    padding: 22px 22px calc(22px + env(safe-area-inset-bottom));
+    max-height: 82vh;
+    overflow-y:auto;
+    animation: slideup .3s ease;
+  }
+  @keyframes slideup{ from{ transform: translateY(30px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .modal-sheet h2{ margin-top:0; }
+  .modal-close{
+    display:block; margin: 14px auto 0; background:none; border:none;
+    color: var(--ink-soft); font-size:0.85rem; cursor:pointer;
+  }
+  .crisis-box{
+    background: var(--coral-pale);
+    border-radius: 14px;
+    padding: 16px;
+    margin: 10px 0;
+  }
+  .crisis-box .num{ font-family:'Fraunces', serif; font-size:1.6rem; color:#9c4a36; }
+  .crisis-box p{ font-size:0.85rem; line-height:1.5; margin: 4px 0 0; color:#6b3728; }
+
+  .settings-row{ display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+  .settings-row label{ font-size:0.8rem; color:var(--ink-soft); font-weight:600; }
+  .settings-row input{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-family:'Inter'; font-size:0.9rem;}
+
+  .low-mood-note{
+    display:none;
+    margin-top: 14px;
+    background: var(--coral-pale);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #6b3728;
+  }
+  .low-mood-note a, .low-mood-note button.link-like{
+    color:#9c4a36; font-weight:700; text-decoration:underline; background:none; border:none; padding:0; font-size:inherit; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="help-link">
+    <button class="help-btn" onclick="openModal('crisisModal')">🕊️ Preciso de ajuda agora</button>
+  </div>
+
+  <header class="topbar">
+    <div>
+      <div class="greeting display" id="greetingText">Oi. Que bom te ver.</div>
+      <div class="date" id="dateText"></div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- TODAY VIEW -->
+    <section class="view active" id="view-hoje">
+
+      <div class="card plant-card">
+        <svg class="plant-svg" id="plantSvg" viewBox="0 0 200 150"></svg>
+        <div class="plant-caption" id="plantCaption">cada dia que você aparece aqui, isso cresce um pouco.</div>
+      </div>
+
+      <div class="card">
+        <h2>Como você está agora?</h2>
+        <p class="sub">Não precisa ser a resposta certa. Só a de verdade.</p>
+        <div class="mood-row" id="moodRow"></div>
+        <div class="mood-labels"><span>difícil</span><span>tranquilo</span></div>
+
+        <div class="checkin-questions" id="checkinQuestions"></div>
+
+        <div class="low-mood-note" id="lowMoodNote">
+          Parece que hoje está pesado. Tudo bem sentir isso — você não precisa resolver sozinho agora.
+          <br><button class="link-like" onclick="openModal('crisisModal')">Ver formas de pedir ajuda</button>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="checkinSaveBtn" onclick="saveCheckin()">Salvar como estou hoje</button>
+      </div>
+
+      <div class="card">
+        <h2>Duas linhas sobre o dia</h2>
+        <p class="sub">Sem pressão de escrever bonito. É só pra você.</p>
+        <textarea id="quickJournal" placeholder="Hoje eu..."></textarea>
+        <button class="btn btn-primary btn-block" onclick="saveJournal()">Guardar no diário</button>
+      </div>
+
+      <div class="card">
+        <h2>Pequenas metas de hoje</h2>
+        <p class="sub">Marcar uma só já conta como um dia bom.</p>
+        <div id="goalsList"></div>
+        <div class="add-goal-row">
+          <input type="text" id="newGoalInput" placeholder="ex: tomar banho">
+          <button class="btn btn-ghost" onclick="addGoal()">Adicionar</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- DIARY VIEW -->
+    <section class="view" id="view-diario">
+      <div class="card">
+        <h2>Seu diário</h2>
+        <p class="sub">Tudo que você já escreveu, num só lugar.</p>
+        <div id="journalList"></div>
+      </div>
+    </section>
+
+    <!-- PROGRESS VIEW -->
+    <section class="view" id="view-progresso">
+
+      <div class="card">
+        <h2>Seu humor nos últimos check-ins</h2>
+        <div class="chart-wrap"><svg class="chart" id="moodChart" viewBox="0 0 300 120" preserveAspectRatio="none"></svg></div>
+      </div>
+
+      <div class="card">
+        <h2>Contadores</h2>
+        <p class="sub">Um número que volta a zero não apaga os dias que vieram antes.</p>
+        <div class="counter-grid" id="counterGrid"></div>
+        <div class="add-counter-row">
+          <input type="text" id="newCounterInput" placeholder="ex: dias escolhendo continuar">
+          <button class="btn btn-ghost" onclick="addCounter()">Criar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Aniversário</h2>
+        <div class="bday-row">
+          <div class="bday-number" id="bdayNumber">—</div>
+          <div>
+            <div style="font-size:0.85rem; color:var(--ink-soft);" id="bdayLabel">defina sua data</div>
+          </div>
+        </div>
+        <div class="bday-set">
+          <input type="date" id="bdayInput">
+          <button class="btn btn-ghost" onclick="saveBday()">Salvar</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- GOALS/CONFIG placeholder view could reuse hoje; settings via modal -->
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" data-view="hoje" onclick="switchView('hoje')">
+      <span class="icon">🌤️</span> Hoje
+    </button>
+    <button class="tab-btn" data-view="diario" onclick="switchView('diario')">
+      <span class="icon">📖</span> Diário
+    </button>
+    <button class="tab-btn" data-view="progresso" onclick="switchView('progresso')">
+      <span class="icon">🌱</span> Progresso
+    </button>
+    <button class="tab-btn" data-view="settings" onclick="openModal('settingsModal')">
+      <span class="icon">⚙️</span> Ajustes
+    </button>
+  </nav>
+
+</div>
+
+<!-- CRISIS MODAL -->
+<div class="modal-backdrop" id="crisisModal">
+  <div class="modal-sheet">
+    <h2>Você não precisa passar por isso sozinho</h2>
+    <p class="sub" style="margin-bottom:4px;">Se estiver em crise, pensando em se machucar ou sem conseguir se manter seguro agora, procure ajuda imediatamente — este app não substitui isso.</p>
+    <div class="crisis-box">
+      <div class="num">188</div>
+      <p>CVV — Centro de Valorização da Vida. Ligação gratuita, 24h, todos os dias. Também dá pra conversar pelo chat em cvv.org.br.</p>
+    </div>
+    <div class="crisis-box">
+      <div class="num">192</div>
+      <p>SAMU, para emergências médicas imediatas.</p>
+    </div>
+    <p class="sub">Se possível, também vale avisar alguém de confiança perto de você agora.</p>
+    <button class="modal-close" onclick="closeModal('crisisModal')">Fechar</button>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal-sheet">
+    <h2>Ajustes</h2>
+    <div class="settings-row">
+      <label>Como podemos te chamar?</label>
+      <input type="text" id="userNameInput" placeholder="seu nome ou apelido">
+    </div>
+    <div class="settings-row">
+      <label>Lembretes gentis</label>
+      <div class="toggle-group" style="flex-wrap:wrap;">
+        <button class="toggle-btn active" id="remWater" onclick="toggleReminder('remWater')">09:00 — beber água</button>
+        <button class="toggle-btn active" id="remFood" onclick="toggleReminder('remFood')">18:00 — como foi o dia</button>
+        <button class="toggle-btn active" id="remCheckin" onclick="toggleReminder('remCheckin')">21:00 — hora de descansar</button>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:8px;" onclick="requestNotificationPermission()" id="notifPermBtn">Ativar notificações neste navegador</button>
+      <p class="sub" style="margin-top:6px;">Isso só funciona com a página aberta em segundo plano no navegador. Num app de celular de verdade, essas mensagens viram notificações do sistema mesmo com o app fechado.</p>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="saveSettings()">Salvar</button>
+    <button class="modal-close" onclick="closeModal('settingsModal')">Fechar</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ESTADO (em memória — ao transformar em app, troque por
+   armazenamento persistente: localStorage, SQLite, ou uma API.
+   Está tudo centralizado em `state` de propósito, pra facilitar
+   essa troca depois.)
+   ============================================================ */
+/* ============================================================
+   ESTADO — agora salvo de verdade no localStorage do navegador.
+   Tudo que muda o estado chama saveState() logo em seguida.
+   Se algum dia trocar para um backend/SQLite, é só reescrever
+   saveState() e loadState() — o resto do código não muda.
+   ============================================================ */
+const STORAGE_KEY = 'enraizar-state-v1';
+
+const defaultState = {
+  userName: "",
+  checkins: [],
+  journal: [],
+  goals: [
+    {id: cryptoId(), text: "Sair da cama", done: false},
+    {id: cryptoId(), text: "Beber um copo d'água", done: false},
+    {id: cryptoId(), text: "Falar com alguém, nem que seja um oi", done: false},
+  ],
+  counters: [
+    {id: cryptoId(), name: "Dias cuidando de mim", start: todayMinus(4), record: 4},
+    {id: cryptoId(), name: "Meu caminho de autocuidado", start: todayMinus(9), record: 9},
+  ],
+  birthday: null,
+  reminders: {remWater:true, remFood:true, remCheckin:true},
+  notifiedToday: {},
+};
+
+function cryptoId(){ return Math.random().toString(36).slice(2,10); }
+function todayMinus(days){ const d = new Date(); d.setDate(d.getDate()-days); return d.toISOString(); }
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return structuredClone(defaultState);
+    const saved = JSON.parse(raw);
+    // mescla com os padrões, pra não quebrar se adicionarmos campos novos no futuro
+    return Object.assign(structuredClone(defaultState), saved);
+  }catch(err){
+    console.warn('Não foi possível ler dados salvos, começando do zero.', err);
+    return structuredClone(defaultState);
+  }
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(err){
+    console.warn('Não foi possível salvar os dados agora.', err);
+  }
+}
+
+const state = loadState();
+state.selectedMood = null;
+state.checkinAnswers = {water:null, food:null, sleep:null};
+
+function fmtDate(d){
+  return new Intl.DateTimeFormat('pt-BR', {weekday:'long', day:'numeric', month:'long'}).format(new Date(d));
+}
+
+/* ---------- init ---------- */
+document.getElementById('dateText').textContent = fmtDate(new Date());
+
+const MOODS = [
+  {v:1, e:'😔'}, {v:2, e:'😕'}, {v:3, e:'😐'}, {v:4, e:'🙂'}, {v:5, e:'😊'}
+];
+const moodRow = document.getElementById('moodRow');
+MOODS.forEach(m=>{
+  const b = document.createElement('button');
+  b.className = 'mood-btn';
+  b.textContent = m.e;
+  b.onclick = ()=> selectMood(m.v, b);
+  moodRow.appendChild(b);
+});
+
+function selectMood(v, btn){
+  state.selectedMood = v;
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const note = document.getElementById('lowMoodNote');
+  note.style.display = (v <= 2) ? 'block' : 'none';
+}
+
+const QUESTIONS = [
+  {key:'water', label:'Já bebeu água?'},
+  {key:'food', label:'Já comeu hoje?'},
+  {key:'sleep', label:'Dormiu razoavelmente?'}
+];
+const qWrap = document.getElementById('checkinQuestions');
+QUESTIONS.forEach(q=>{
+  const row = document.createElement('div');
+  row.className = 'q-row';
+  row.innerHTML = `<span>${q.label}</span>
+    <div class="toggle-group">
+      <button class="toggle-btn" data-key="${q.key}" data-val="1">sim</button>
+      <button class="toggle-btn" data-key="${q.key}" data-val="0">ainda não</button>
+    </div>`;
+  qWrap.appendChild(row);
+});
+qWrap.addEventListener('click', (e)=>{
+  if(!e.target.classList.contains('toggle-btn')) return;
+  const key = e.target.dataset.key, val = e.target.dataset.val === '1';
+  state.checkinAnswers[key] = val;
+  qWrap.querySelectorAll(`[data-key="${key}"]`).forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+});
+
+/* ---------- navigation ---------- */
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.tab-btn[data-view="${name}"]`)?.classList.add('active');
+  if(name==='diario') renderJournal();
+  if(name==='progresso'){ renderCounters(); renderChart(); renderBday(); }
+}
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+/* ---------- check-in ---------- */
+function saveCheckin(){
+  if(state.selectedMood === null){ alert('Escolha como você está antes de salvar.'); return; }
+  state.checkins.push({
+    date: new Date().toISOString(),
+    mood: state.selectedMood,
+    ...state.checkinAnswers
+  });
+  saveState();
+  renderPlant();
+  renderChart();
+  const btn = document.getElementById('checkinSaveBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Registrado ✓';
+  setTimeout(()=> btn.textContent = original, 1400);
+}
+
+/* ---------- journal ---------- */
+function saveJournal(){
+  const ta = document.getElementById('quickJournal');
+  const text = ta.value.trim();
+  if(!text) return;
+  state.journal.unshift({date: new Date().toISOString(), text, mood: state.selectedMood});
+  ta.value = '';
+  saveState();
+  renderPlant();
+}
+
+function renderJournal(){
+  const wrap = document.getElementById('journalList');
+  wrap.innerHTML = '';
+  if(state.journal.length === 0){
+    wrap.innerHTML = `<div class="empty-state">Ainda não há nada aqui.<br>Quando quiser, escreva duas linhas na aba Hoje.</div>`;
+    return;
+  }
+  state.journal.forEach(e=>{
+    const moodEmoji = e.mood ? MOODS.find(m=>m.v===e.mood)?.e : '';
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `<div class="entry-top"><span class="entry-date">${fmtDate(e.date)}</span><span class="entry-mood">${moodEmoji||''}</span></div>
+      <div class="entry-text">${escapeHtml(e.text)}</div>`;
+    wrap.appendChild(div);
+  });
+}
+function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* ---------- goals ---------- */
+function renderGoals(){
+  const wrap = document.getElementById('goalsList');
+  wrap.innerHTML = '';
+  if(state.goals.length === 0){
+    wrap.innerHTML = `<div class="empty-state">Nenhuma meta ainda. Adicione algo bem pequeno.</div>`;
+    return;
+  }
+  state.goals.forEach(g=>{
+    const div = document.createElement('div');
+    div.className = 'goal-item';
+    div.innerHTML = `
+      <div class="goal-check ${g.done?'done':''}" onclick="toggleGoal('${g.id}')">${g.done?'✓':''}</div>
+      <div class="goal-text ${g.done?'done':''}">${escapeHtml(g.text)}</div>
+      <button class="goal-remove" onclick="removeGoal('${g.id}')">✕</button>`;
+    wrap.appendChild(div);
+  });
+}
+function toggleGoal(id){
+  const g = state.goals.find(g=>g.id===id);
+  g.done = !g.done;
+  saveState();
+  renderGoals();
+  renderPlant();
+}
+function removeGoal(id){
+  state.goals = state.goals.filter(g=>g.id!==id);
+  saveState();
+  renderGoals();
+}
+function addGoal(){
+  const input = document.getElementById('newGoalInput');
+  const text = input.value.trim();
+  if(!text) return;
+  state.goals.push({id: cryptoId(), text, done:false});
+  input.value = '';
+  saveState();
+  renderGoals();
+}
+
+/* ---------- counters ---------- */
+function daysSince(iso){
+  const diff = Date.now() - new Date(iso).getTime();
+  return Math.max(0, Math.floor(diff / 86400000));
+}
+function renderCounters(){
+  const wrap = document.getElementById('counterGrid');
+  wrap.innerHTML = '';
+  state.counters.forEach(c=>{
+    const days = daysSince(c.start);
+    const record = Math.max(c.record||0, days);
+    const div = document.createElement('div');
+    div.className = 'counter-card';
+    div.innerHTML = `
+      <div class="counter-top">
+        <div>
+          <div class="counter-name">${escapeHtml(c.name)}</div>
+          <div class="counter-days">${days}</div>
+          <div class="counter-unit">dias</div>
+        </div>
+      </div>
+      ${record > days ? `<div class="counter-record">seu melhor até agora: ${record} dias — isso continua valendo</div>` : ''}
+      <div class="counter-actions">
+        <button class="btn btn-ghost" onclick="resetCounter('${c.id}')">Recomeçar contagem</button>
+        <button class="btn btn-ghost" onclick="removeCounter('${c.id}')">Remover</button>
+      </div>
+      <div class="counter-reframe" id="reframe-${c.id}">
+        Recomeçar não apaga o que veio antes. Você já chegou a <strong>${record}</strong> dias — isso ainda conta,
+        e mostra que é possível chegar lá de novo.
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+function resetCounter(id){
+  const c = state.counters.find(c=>c.id===id);
+  const days = daysSince(c.start);
+  c.record = Math.max(c.record||0, days);
+  c.start = new Date().toISOString();
+  saveState();
+  renderCounters();
+  const box = document.getElementById('reframe-'+id);
+  if(box){ box.style.display = 'block'; }
+}
+function removeCounter(id){
+  state.counters = state.counters.filter(c=>c.id!==id);
+  saveState();
+  renderCounters();
+}
+function addCounter(){
+  const input = document.getElementById('newCounterInput');
+  const name = input.value.trim();
+  if(!name) return;
+  state.counters.push({id: cryptoId(), name, start: new Date().toISOString(), record:0});
+  input.value = '';
+  saveState();
+  renderCounters();
+}
+
+/* ---------- birthday ---------- */
+function saveBday(){
+  const val = document.getElementById('bdayInput').value;
+  if(!val) return;
+  state.birthday = val;
+  saveState();
+  renderBday();
+}
+function renderBday(){
+  const numEl = document.getElementById('bdayNumber');
+  const labelEl = document.getElementById('bdayLabel');
+  if(!state.birthday){ numEl.textContent = '—'; labelEl.textContent = 'defina sua data'; return; }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const [y,m,d] = state.birthday.split('-').map(Number);
+  let next = new Date(today.getFullYear(), m-1, d);
+  if(next < today) next = new Date(today.getFullYear()+1, m-1, d);
+  const days = Math.round((next - today)/86400000);
+  numEl.textContent = days;
+  labelEl.textContent = days === 0 ? 'é hoje! 🎉' : 'dias até seu aniversário';
+}
+
+/* ---------- mood chart ---------- */
+function renderChart(){
+  const svg = document.getElementById('moodChart');
+  svg.innerHTML = '';
+  const data = state.checkins.slice(-14);
+  if(data.length < 2){
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x','10'); t.setAttribute('y','60'); t.setAttribute('fill','#6B6259'); t.setAttribute('font-size','11');
+    t.textContent = 'Faça alguns check-ins para ver seu padrão aqui.';
+    svg.appendChild(t);
+    return;
+  }
+  const w = 300, h = 120, pad = 10;
+  const stepX = (w - pad*2) / (data.length - 1);
+  const pts = data.map((d,i)=>{
+    const x = pad + i*stepX;
+    const y = h - pad - ((d.mood-1)/4)*(h-pad*2);
+    return [x,y];
+  });
+  const path = 'M' + pts.map(p=>p.join(',')).join(' L ');
+  const line = document.createElementNS('http://www.w3.org/2000/svg','path');
+  line.setAttribute('d', path);
+  line.setAttribute('fill','none');
+  line.setAttribute('stroke','#6E8B65');
+  line.setAttribute('stroke-width','2.5');
+  line.setAttribute('stroke-linecap','round');
+  line.setAttribute('stroke-linejoin','round');
+  svg.appendChild(line);
+  pts.forEach(p=>{
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',p[0]); c.setAttribute('cy',p[1]); c.setAttribute('r','3');
+    c.setAttribute('fill','#4F6B49');
+    svg.appendChild(c);
+  });
+}
+
+/* ---------- signature: growing plant ---------- */
+function renderPlant(){
+  const svg = document.getElementById('plantSvg');
+  const totalActs = state.checkins.length + state.journal.length + state.goals.filter(g=>g.done).length;
+  const leaves = Math.min(totalActs, 7);
+  svg.innerHTML = '';
+  const ns = 'http://www.w3.org/2000/svg';
+  const stemHeight = 30 + leaves*10;
+  const stem = document.createElementNS(ns,'path');
+  stem.setAttribute('d', `M100,145 C100,${145-stemHeight*0.5} 100,${145-stemHeight*0.8} 100,${145-stemHeight}`);
+  stem.setAttribute('stroke', '#6E8B65');
+  stem.setAttribute('stroke-width','3');
+  stem.setAttribute('fill','none');
+  stem.setAttribute('stroke-linecap','round');
+  svg.appendChild(stem);
+
+  for(let i=0;i<leaves;i++){
+    const t = 1 - (i/7);
+    const y = 145 - stemHeight*t*0.9 - 6;
+    const side = i%2===0 ? 1 : -1;
+    const leaf = document.createElementNS(ns,'ellipse');
+    leaf.setAttribute('cx', 100 + side*14);
+    leaf.setAttribute('cy', y);
+    leaf.setAttribute('rx', 13);
+    leaf.setAttribute('ry', 7);
+    leaf.setAttribute('fill', '#8CAB80');
+    leaf.setAttribute('opacity', '0');
+    leaf.setAttribute('transform', `rotate(${side*30} ${100+side*14} ${y})`);
+    leaf.style.transition = 'opacity .6s ease';
+    svg.appendChild(leaf);
+    setTimeout(()=> leaf.setAttribute('opacity','0.95'), i*80);
+  }
+
+  const pot = document.createElementNS(ns,'path');
+  pot.setAttribute('d','M82,145 L118,145 L112,168 L88,168 Z');
+  pot.setAttribute('fill', '#B98A6B');
+  svg.appendChild(pot);
+
+  const caption = document.getElementById('plantCaption');
+  if(totalActs === 0) caption.textContent = "ainda não plantamos nada — comece com um check-in.";
+  else if(totalActs < 3) caption.textContent = "as primeiras folhas estão chegando.";
+  else if(totalActs < 7) caption.textContent = "olha só, já tem mais vida aqui.";
+  else caption.textContent = "isso já é um jardim — e ele não desaparece num dia ruim.";
+}
+
+/* ---------- settings ---------- */
+function toggleReminder(key){
+  state.reminders[key] = !state.reminders[key];
+  document.getElementById(key).classList.toggle('active', state.reminders[key]);
+  saveState();
+}
+function saveSettings(){
+  state.userName = document.getElementById('userNameInput').value.trim();
+  document.getElementById('greetingText').textContent = state.userName ? `Oi, ${state.userName}.` : 'Oi. Que bom te ver.';
+  saveState();
+  closeModal('settingsModal');
+}
+
+/* ---------- notificações (mensagens fixas) ----------
+   Isto é um começo simples: enquanto a aba estiver aberta,
+   checamos a cada minuto se bateu um dos horários fixos.
+   Não substitui notificações reais em segundo plano — isso
+   exige um service worker com Push API + um servidor que
+   dispare os pushes, o que fica para uma próxima etapa caso
+   você queira uma "IA" perguntando de verdade todo dia.
+------------------------------------------------------- */
+const FIXED_REMINDERS = [
+  {time:'09:00', key:'remWater', text:'Bom dia. Você já bebeu água hoje? 🌱'},
+  {time:'18:00', key:'remFood',  text:'Como foi seu dia? Teve algo pesado ou algo bom?'},
+  {time:'21:00', key:'remCheckin', text:'Está perto do seu horário de descansar. Como sua cabeça está?'},
+];
+
+function requestNotificationPermission(){
+  if(!('Notification' in window)){
+    alert('Este navegador não suporta notificações.');
+    return;
+  }
+  Notification.requestPermission().then(perm=>{
+    const btn = document.getElementById('notifPermBtn');
+    btn.textContent = perm === 'granted' ? 'Notificações ativadas ✓' : 'Permissão não concedida';
+  });
+}
+
+function checkFixedReminders(){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = new Date();
+  const hhmm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const todayKey = now.toISOString().slice(0,10);
+  FIXED_REMINDERS.forEach(r=>{
+    if(!state.reminders[r.key]) return;
+    if(r.time !== hhmm) return;
+    const alreadyKey = todayKey + '-' + r.key;
+    if(state.notifiedToday[alreadyKey]) return;
+    new Notification('Enraizar', {body: r.text, icon: 'imagens/icon-192.png'});
+    state.notifiedToday[alreadyKey] = true;
+    saveState();
+  });
+}
+setInterval(checkFixedReminders, 30000);
+
+/* ---------- service worker (PWA / uso offline) ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(err=>{
+      console.warn('Service worker não registrado:', err);
+    });
+  });
+}
+
+/* ---------- boot ---------- */
+document.getElementById('userNameInput').value = state.userName || '';
+if(state.userName){ document.getElementById('greetingText').textContent = `Oi, ${state.userName}.`; }
+Object.keys(state.reminders).forEach(key=>{
+  const el = document.getElementById(key);
+  if(el) el.classList.toggle('active', state.reminders[key]);
+});
+if(state.birthday){ document.getElementById('bdayInput').value = state.birthday; }
+renderGoals();
+renderPlant();
+renderBday();
+</script>
+</body>
+</html>
