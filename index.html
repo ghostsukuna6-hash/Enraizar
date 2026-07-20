@@ -7,8 +7,8 @@
 <meta name="theme-color" content="#6E8B65">
 <meta name="description" content="Um companheiro de bem-estar simples: check-ins, diário, metas pequenas e contadores gentis.">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="imagens/icon-192.png">
-<link rel="icon" href="imagens/icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Caveat:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -947,7 +947,7 @@ function checkFixedReminders(){
     if(r.time !== hhmm) return;
     const alreadyKey = todayKey + '-' + r.key;
     if(state.notifiedToday[alreadyKey]) return;
-    new Notification('Enraizar', {body: r.text, icon: 'imagens/icon-192.png'});
+    new Notification('Enraizar', {body: r.text, icon: 'icon-192.png'});
     state.notifiedToday[alreadyKey] = true;
     saveState();
   });
@@ -977,3 +977,4 @@ renderBday();
 </script>
 </body>
 </html>
+
